@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+    <body>
+        <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="js/canvasjs.min.js"></script>
+        <script>
+            let socket = io();
+            window.onload = function () {
+                let chart = new CanvasJS.Chart("chartContainer", {
+                    animationEnabled: true,
+                    theme: "dark2",
+                    title:{
+                        text: "Soil Moisture Sensor Output"
+                    },
+                    axisY:{
+                        includeZero: false,
+                    },
+                    data: [{
+                        type: "line",
+                        indexLabelFontSize: 16,
+						lineColor: "green",
+                        dataPoints: []
+                    }]
+                });
+                chart.render();
+                socket.on('newMoistureSensorValue', (value) => {
+                    chart.data[0].dataPoints.push({y: value});
+                    chart.render();
+                });
+
+            }
+        </script>
+    </body>
+</html>
