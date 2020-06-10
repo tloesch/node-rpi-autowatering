@@ -1,18 +1,22 @@
 class Config {
 
     constructor(configFolderPath = '') {
-        this.staticProperties = ['GPIO'];
-        this.privateProperties = ['GPIO'];
+        this.staticProperties = ['GPIO', 'PORT'];
+        this.privateProperties = ['GPIO', 'PORT'];
 
         this.fs = require('fs');
         this.configPath = configFolderPath + 'config.json';
         this.config = this.getDefaultConfig();
-        if(this.fs.existsSync(this.configPath )) {
-            this.update(JSON.parse(this.fs.readFileSync('config.json')));
+        if(this.fs.existsSync(this.configPath)) {
+            this.update(JSON.parse(this.fs.readFileSync(this.configPath)));
         } else {
             this.update(this.getDefaultConfig());
         }
         return this.createProxy();
+    }
+
+    getDefaultConfig () {
+        return JSON.parse(this.fs.readFileSync('default_config.json'));
     }
 
     createProxy() {
@@ -30,20 +34,6 @@ class Config {
                 return undefined;
             }
         });
-    }
-
-    getDefaultConfig () {
-        return {
-            IS_AUTOWATERING_ENABLED: false,
-            NUMBER_OF_CONSECUTIVE_WATERING: 10,
-            CONSECUTIVE_WATERING_INTERVAL: 1500,
-            IS_WET_THRESHOLD: 0,
-            MOISTURE_SENSOR_UPDATE_INTERVAL: 20000,
-            GPIO: {
-                PUMP: 7,
-                MOISTURE_SENSOR: 6
-            }
-        };
     }
 
     getConfigObject() {

@@ -107,6 +107,6 @@ app.get('/config', (req, res) => {
     return res.send(config.getPublicConfigObject());
 });
 
-http.listen(3000, () => {
-    console.log('listening on *:3000');
+http.listen(config.PORT, () => {
+    console.log('listening on *:' + config.PORT);
 });
