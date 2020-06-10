@@ -3,7 +3,7 @@ const GpioBase = require('./Base');
 class GpioMoistureSensor extends GpioBase {
 
     createGpioInterface(pin) {
-        return new this.GpioInterface(pin, 'out');
+        return new this.GpioInterface(pin, 'in', 'both');
     }
 
     getValue() {
