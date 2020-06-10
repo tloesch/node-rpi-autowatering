@@ -8,7 +8,7 @@ class GpioPump extends GpioBase {
     }
 
     createGpioInterface(pin) {
-        return new this.GpioInterface(pin, 'in', 'both');
+        return new this.GpioInterface(pin, 'out');
     }
 
     reset() {
