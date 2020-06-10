@@ -9,7 +9,7 @@
 	"start": "node start.js"
   },
   "author": "Timo Loesch",
-  "license": "ISC",
+  "license": "GNU GPLv3",
   "dependencies": {
     "bootstrap": "^4.5.0",
     "express": "^4.17.1",
