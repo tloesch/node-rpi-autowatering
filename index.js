@@ -20,7 +20,7 @@ moistureSensor.setLogger(logger);
 
 io.on('connection', (socket) => {
     console.log('a user connected');
-    socket.emit('configUpdated', config.getConfigObject());
+    socket.emit('configUpdated', config.getPublicConfigObject());
     socket.emit('pumpToggled', pump.isActivated());
     socket.on('disconnect', () => console.log('user disconnected'));
 });
@@ -53,13 +53,13 @@ app.post('/config/update', (req, res) => {
     config.update(req.body);
     moistureSensor.stopContinuouslyReading();
     moistureSensor.startContinuouslyReading(onNewMoistureSensorValue, config.MOISTURE_SENSOR_UPDATE_INTERVAL);
-    io.emit('configUpdated', config.getConfigObject());
+    io.emit('configUpdated', config.getPublicConfigObject());
     return res.send(config.getConfigObject());
 });
 
 let turnOffAutowatering = () => {
     config.update({IS_AUTOWATERING_ENABLED: false});
-    io.emit('configUpdated', config.getConfigObject());
+    io.emit('configUpdated', config.getPublicConfigObject());
     let response = {message: 'Autowatering: Pump could continue tu run for about ' + (config.CONSECUTIVE_WATERING_INTERVAL * config.NUMBER_OF_CONSECUTIVE_WATERING / 1000) + ' seconds!'};
     logger.info('Autowatering turned off!');
     logger.info(response.message);
@@ -76,7 +76,7 @@ app.post('/autowatering/on', (req, res) => {
     turnOffPump();
     config.update({IS_AUTOWATERING_ENABLED: true});
     logger.info('Autowatering turned on!');
-    io.emit('configUpdated', config.getConfigObject());
+    io.emit('configUpdated', config.getPublicConfigObject());
     return res.send(true);
 });
 
@@ -104,7 +104,7 @@ app.get('/moiusturesensor/value', (req, res) => {
 });
 
 app.get('/config', (req, res) => {
-    return res.send(config.getConfigObject());
+    return res.send(config.getPublicConfigObject());
 });
 
 http.listen(3000, () => {

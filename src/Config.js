@@ -2,6 +2,7 @@ class Config {
 
     constructor(configFolderPath = '') {
         this.staticProperties = ['GPIO'];
+        this.privateProperties = ['GPIO'];
 
         this.fs = require('fs');
         this.configPath = configFolderPath + 'config.json';
@@ -33,11 +34,11 @@ class Config {
 
     getDefaultConfig () {
         return {
-            IS_AUTOWATERING_ENABLED: true,
+            IS_AUTOWATERING_ENABLED: false,
             NUMBER_OF_CONSECUTIVE_WATERING: 10,
             CONSECUTIVE_WATERING_INTERVAL: 1500,
             IS_WET_THRESHOLD: 0,
-            MOISTURE_SENSOR_UPDATE_INTERVAL: 1000,
+            MOISTURE_SENSOR_UPDATE_INTERVAL: 20000,
             GPIO: {
                 PUMP: 7,
                 MOISTURE_SENSOR: 6
@@ -49,6 +50,16 @@ class Config {
         return this.config;
     }
 
+    getPublicConfigObject() {
+        let publicConfigObject = Object.assign({}, this.getConfigObject());
+        for(let key in publicConfigObject) {
+            if(this.privateProperties.includes(key)) {
+                delete publicConfigObject[key];
+            }
+        }
+        return publicConfigObject;
+    }
+
     async update(config) {
         for (let key in config) {
             if(key in this.config && !this.staticProperties.includes(key)) {
@@ -56,7 +67,7 @@ class Config {
             }
         }
         await this.fs.writeFileSync(this.configPath, JSON.stringify(this.getConfigObject()));
-        this.logMessage('Config updated! ' + JSON.stringify(this.getConfigObject()));
+        this.logMessage('Config updated! ' + JSON.stringify(this.getPublicConfigObject()));
         return this.config;
     }
 
