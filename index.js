@@ -20,8 +20,8 @@ moistureSensor.setLogger(logger);
 
 io.on('connection', (socket) => {
     console.log('a user connected');
-    socket.emit('configUpdated', config);
-
+    socket.emit('configUpdated', config.getConfigObject());
+    socket.emit('pumpToggled', pump.isActivated());
     socket.on('disconnect', () => console.log('user disconnected'));
 });
 
@@ -46,39 +46,56 @@ moistureSensor.startContinuouslyReading(onNewMoistureSensorValue, config.MOISTUR
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
+app.use(express.static(__dirname + '/node_modules/bootstrap/dist'));
+app.use(express.static(__dirname + '/node_modules/jquery/dist'));
 
 app.post('/config/update', (req, res) => {
     config.update(req.body);
     moistureSensor.stopContinuouslyReading();
     moistureSensor.startContinuouslyReading(onNewMoistureSensorValue, config.MOISTURE_SENSOR_UPDATE_INTERVAL);
-    io.emit('configUpdated', config);
+    io.emit('configUpdated', config.getConfigObject());
     return res.send(config.getConfigObject());
 });
 
+let turnOffAutowatering = () => {
+    config.update({IS_AUTOWATERING_ENABLED: false});
+    io.emit('configUpdated', config.getConfigObject());
+    let response = {message: 'Autowatering: Pump could continue tu run for about ' + (config.CONSECUTIVE_WATERING_INTERVAL * config.NUMBER_OF_CONSECUTIVE_WATERING / 1000) + ' seconds!'};
+    logger.info('Autowatering turned off!');
+    logger.info(response.message);
+    return response;
+};
+
+let turnOffPump = () => {
+    pump.off();
+    logger.info('Pump turned off!');
+    io.emit('pumpToggled', pump.isActivated());
+};
+
 app.post('/autowatering/on', (req, res) => {
+    turnOffPump();
     config.update({IS_AUTOWATERING_ENABLED: true});
     logger.info('Autowatering turned on!');
-    io.emit('configUpdated', config);
+    io.emit('configUpdated', config.getConfigObject());
     return res.send(true);
 });
 
 app.post('/autowatering/off', (req, res) => {
-    config.update({IS_AUTOWATERING_ENABLED: false});
-    logger.info('Autowatering turned off!');
-    io.emit('configUpdated', config);
-    return res.send({message: 'Pump could continue tu run for about ' + (config.CONSECUTIVE_WATERING_INTERVAL * config.NUMBER_OF_CONSECUTIVE_WATERING / 1000) + ' seconds!'});
+    return res.send(turnOffAutowatering());
 });
-
-
-
 
 app.post('/pump/on', (req, res) => {
     pump.on();
+    logger.info('Pump turned on!');
+    config.IS_AUTOWATERING_ENABLED && turnOffAutowatering();
+    io.emit('pumpToggled', pump.isActivated());
     return res.send(true);
 });
 
+
+
 app.post('/pump/off', (req, res) => {
-    pump.off();
+    turnOffPump();
     return res.send(true);
 });
 

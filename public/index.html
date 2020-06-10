@@ -1,9 +1,43 @@
 <!DOCTYPE HTML>
 <html>
-    <body>
-        <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+    <head>
+        <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    </head>
+    <body style="margin: 0 auto;background-color:#32373a">
+        <div id="chartContainer" style="height: 20%; width: 100%;position:absolute; top: 0%;"></div>
+        <div style="height: 5%; width: 100%;position:absolute; top: 20%;color:white">
+            <h1 style="height:100%;width: 50%;margin: 0 auto;text-align: center;font-size: 1.9vw">Log</h1>
+        </div>
+        <div id="logContainer" style="height: 30%; width: 100%;background-color: #32373a;  color: white;position:absolute; top: 25%; overflow:auto;overflow-wrap: break-word;">
+
+        </div>
+
+        <div id="controlsContainer" style="position:absolute; top: 55%;color:white;width:100%">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn" style="color: white">Pump:</label>
+                <label class="btn btn-secondary active">
+                    <input type="radio" name="pumpoption" id="pumpoptionon" autocomplete="off"> On
+                </label>
+                <label class="btn btn-secondary">
+                    <input type="radio" name="pumpoption" id="pumpoptionoff" autocomplete="off"> Off
+                </label>
+            </div>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons" id="autowateringoption">
+                <label class="btn" style="color: white">Autowatering:</label>
+                <label class="btn btn-secondary active">
+                    <input type="radio" name="autowateringoption" id="autowateringoptionon" autocomplete="off"> On
+                </label>
+                <label class="btn btn-secondary">
+                    <input type="radio" name="autowateringoption" id="autowateringoptionoff" autocomplete="off"> Off
+                </label>
+            </div>
+            <button type="button" id='clearLogButton' class="btn btn-secondary mr-2 float-right">Clear Log</button>
+
+        </div>
 
         <script src="/socket.io/socket.io.js"></script>
+        <script src="jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
         <script src="js/canvasjs.min.js"></script>
         <script>
             let socket = io();
@@ -29,6 +63,39 @@
                     chart.data[0].dataPoints.push({y: value});
                     chart.render();
                 });
+
+                socket.on('configUpdated', (config) => {
+                    let idToToggle = 'autowateringoptionoff';
+                    config.IS_AUTOWATERING_ENABLED && (idToToggle = 'autowateringoptionon');
+                    $('#' + idToToggle).closest('.btn').button('toggle');
+                });
+
+                socket.on('pumpToggled', (state) => {
+                    let idToToggle = 'pumpoptionoff';
+                    state && (idToToggle = 'pumpoptionon');
+
+                    $('#' + idToToggle).closest('.btn').button('toggle');
+                });
+
+                let logContainer = document.getElementById('logContainer');
+                let logTypeColorMap = {
+                    'info': 'yellow',
+                    'error': 'red',
+                }
+                socket.on('messageLogged', (message, type) => {
+                    let element = document.createElement('p');
+                    element.innerHTML = '['+new Date().toLocaleString()+']['+type+'] ' + message;
+                    element.style.color = logTypeColorMap[type];
+                    element.style.margin = '15px 5px 15px 5px';
+                    element.style.fontSize = "1.9vw";
+                    logContainer.prepend(element);
+                });
+
+                document.getElementById('autowateringoptionon').onclick = () => fetch('autowatering/on', { method: 'post' });
+                document.getElementById('autowateringoptionoff').onclick = () => fetch('autowatering/off', { method: 'post' });
+                document.getElementById('pumpoptionon').onclick = () => fetch('pump/on', { method: 'post' });
+                document.getElementById('pumpoptionoff').onclick = () => fetch('pump/off', { method: 'post' });
+                document.getElementById('clearLogButton').onclick = () => {logContainer.innerHTML = ''};
 
             }
         </script>
