@@ -12,17 +12,19 @@ class GpioPump extends GpioBase {
     }
 
     on() {
-        this.gpioPump.writeSync(0);
+        this.logMessage('Turned pump on');
+        this.gpio.writeSync(0);
     }
 
     off() {
-        this.gpioPump.writeSync(1);
+        this.logMessage('Turned pump off');
+        this.gpio && this.gpio.writeSync(1);
     }
 
     activateForServeralTime(timeInMs = 1000) {
         this.reset();
         this.on();
-        this.timeout = setTimeout(this.off, time);
+        this.timeout = setTimeout(this.off.bind(this), timeInMs);
     }
 
 }

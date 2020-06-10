@@ -7,16 +7,18 @@ class GpioMoistureSensor extends GpioBase {
     }
 
     getValue() {
-        return this.gpioSensor.readSync();
+        return this.gpio.readSync();
     }
 
     startContinuouslyReading(callback, interval = 1000) {
+        this.logMessage('Moisture Sensor: started ContinuouslyReading every ' + interval / 1000 + ' seconds');
         this.stopContinuouslyReading();
         this.interval = setInterval(() => callback(this.getValue()), interval);
     }
 
     stopContinuouslyReading() {
         if(this.interval) {
+            this.logMessage('Moisture Sensor: stopped ContinuouslyReading');
             clearInterval(this.interval);
             this.interval = null;
         }

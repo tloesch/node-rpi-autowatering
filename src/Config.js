@@ -45,15 +45,31 @@ class Config {
         };
     }
 
+    getConfigObject() {
+        return this.config;
+    }
+
     async update(config) {
         for (let key in config) {
-            if(key in this.config && !this.staticProperties.contains(key)) {
+            if(key in this.config && !this.staticProperties.includes(key)) {
                 this.config[key] = config[key];
             }
         }
-        await this.fs.writeFileSync(this.configPath, JSON.stringify(this.config));
+        await this.fs.writeFileSync(this.configPath, JSON.stringify(this.getConfigObject()));
+        this.logMessage('Config updated! ' + JSON.stringify(this.getConfigObject()));
         return this.config;
     }
+
+    setLogger(logger) {
+        this.logger = logger;
+    }
+
+    logMessage(message, type = 'info') {
+        if(this.logger) {
+            this.logger.logMessage(message, type);
+        }
+    }
+
 }
 
 module.exports = Config;
