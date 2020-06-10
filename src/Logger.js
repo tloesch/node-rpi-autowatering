@@ -19,6 +19,10 @@ class Logger {
     info(message) {
         this.logMessage(message, 'info');
     }
+
+    warn(message) {
+        this.logMessage(message, 'warn');
+    }
 }
 
 module.exports = Logger;

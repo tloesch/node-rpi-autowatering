@@ -79,13 +79,13 @@
 
                 let logContainer = document.getElementById('logContainer');
                 let logTypeColorMap = {
-                    'info': 'yellow',
+                    'info': '#3988ff',
+                    'warn': 'yellow',
                     'error': 'red',
                 }
                 socket.on('messageLogged', (message, type) => {
                     let element = document.createElement('p');
-                    element.innerHTML = '['+new Date().toLocaleString()+']['+type+'] ' + message;
-                    element.style.color = logTypeColorMap[type];
+                    element.innerHTML = '['+new Date().toLocaleString()+'][<span style="color: ' + logTypeColorMap[type] + '">'+type+'</span>] ' + message;
                     element.style.margin = '15px 5px 15px 5px';
                     element.style.fontSize = "1.9vw";
                     logContainer.prepend(element);

@@ -60,9 +60,9 @@ app.post('/config/update', (req, res) => {
 let turnOffAutowatering = () => {
     config.update({IS_AUTOWATERING_ENABLED: false});
     io.emit('configUpdated', config.getPublicConfigObject());
-    let response = {message: 'Autowatering: Pump could continue tu run for about ' + (config.CONSECUTIVE_WATERING_INTERVAL * config.NUMBER_OF_CONSECUTIVE_WATERING / 1000) + ' seconds!'};
+    let response = {message: 'Autowatering: Pump could continue to run for about ' + (config.CONSECUTIVE_WATERING_INTERVAL * config.NUMBER_OF_CONSECUTIVE_WATERING / 1000) + ' seconds!'};
     logger.info('Autowatering turned off!');
-    logger.info(response.message);
+    logger.warn(response.message);
     return response;
 };
 
