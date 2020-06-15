@@ -6,7 +6,7 @@
     "IS_WET_THRESHOLD": 0,
     "MOISTURE_SENSOR_UPDATE_INTERVAL": 20000,
     "GPIO": {
-        "PUMP": 7,
-        "MOISTURE_SENSOR": 6
+        "PUMP": 4,
+        "MOISTURE_SENSOR": 14
     }
 }
