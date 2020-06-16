@@ -2,11 +2,13 @@ const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
+const basicAuth = require('express-basic-auth');
 
 const Config = require('./src/Config.js');
 const Logger = require('./src/Logger.js');
 const GpioPump = require('./src/Gpio/Pump.js');
 const GpioMoistureSensor = require('./src/Gpio/MoistureSensor.js');
+
 
 let logger = new Logger();
 let config = new Config();
@@ -16,6 +18,16 @@ let moistureSensor = new GpioMoistureSensor(config.GPIO.MOISTURE_SENSOR);
 config.setLogger(logger);
 //pump.setLogger(logger);
 moistureSensor.setLogger(logger);
+
+if(config.BASIC_AUTH.ENABLED) {
+    let users = {};
+    users[config.BASIC_AUTH.USERNAME] = config.BASIC_AUTH.PASSWORD;
+    app.use(basicAuth({
+        users: users,
+        challenge: true,
+    }));
+}
+
 
 
 io.on('connection', (socket) => {

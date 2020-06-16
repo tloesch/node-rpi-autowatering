@@ -8,5 +8,10 @@
     "GPIO": {
         "PUMP": 4,
         "MOISTURE_SENSOR": 14
-    }
+    },
+	"BASIC_AUTH": {
+		"ENABLED": true,
+		"USERNAME": "default",
+		"PASSWORD": "default"
+	}
 }
