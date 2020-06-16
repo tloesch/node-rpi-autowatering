@@ -12,7 +12,7 @@
 
         </div>
 
-        <div id="controlsContainer" style="position:absolute; top: 55%;color:white;width:100%">
+        <div id="controlsContainer" style="position:absolute; top: 55%;color:white;width:100%; height:10%">
             <div class="btn-group btn-group-toggle mr-4" data-toggle="buttons">
                 <label class="btn btn-lg" style="color: white">Pump:</label>
                 <label class="btn btn-lg btn-secondary active">
@@ -33,6 +33,14 @@
             </div>
             <button type="button" id='clearLogButton' class="btn btn-lg btn-secondary mr-2 float-right">Clear Log</button>
 
+        </div>
+
+        <div id="configFormContainer" style="position:absolute; top: 65%;color:white;width:100%" class="pl-2 pr-2">
+            <h1 style="height:100%;width: 50%;margin: 0 auto;text-align: center;font-size: 1.9vw">Config</h1>
+            <form id="configForm">
+                <div id="configFormFields"></div>
+                <button class="btn btn-lg btn-secondary" type="submit">Save Config</button>
+            </form>
         </div>
 
         <script src="/socket.io/socket.io.js"></script>
@@ -59,6 +67,55 @@
                     }]
                 });
                 chart.render();
+
+                let renderConfigForm = (config) => {
+                    let formFields = document.getElementById('configFormFields');
+                    formFields.innerHTML = "";
+                    for(let key in config) {
+                        if (typeof config[key] === "boolean"){
+                            continue;
+                        }
+
+                        let formGroup = document.createElement('div');
+                        formGroup.className = 'form-group';
+
+                        let label = document.createElement('label');
+                        label.setAttribute('for', key);
+                        label.innerHTML = key;
+
+                        let input = document.createElement('input');
+                        input.setAttribute('type', 'text');
+                        input.className = 'form-control';
+                        input.name = input.id = key;
+                        input.value = config[key];
+
+                        formGroup.append(label);
+                        formGroup.append(input);
+                        formFields.append(formGroup);
+                    }
+
+                };
+
+                $('#configForm').on('submit', function (e) {
+                    e.preventDefault();
+                    let formData = new FormData(document.getElementById('configForm'))
+                    var config = {};
+                    formData.forEach(function(value, key){
+                        config[key] = value;
+                        if(!isNaN(parseInt(value)) && isFinite(value)){
+                            config[key] = parseInt(config[key]);
+                        }
+                    });
+                    fetch('config/update', {
+                        method: 'post',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(config)
+                    });
+                });
+
                 socket.on('newMoistureSensorValue', (value) => {
                     chart.data[0].dataPoints.push({y: value});
                     chart.render();
@@ -68,6 +125,7 @@
                     let idToToggle = 'autowateringoptionoff';
                     config.IS_AUTOWATERING_ENABLED && (idToToggle = 'autowateringoptionon');
                     $('#' + idToToggle).closest('.btn').button('toggle');
+                    renderConfigForm(config);
                 });
 
                 socket.on('pumpToggled', (state) => {
