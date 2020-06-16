@@ -41,9 +41,10 @@ class GpioPump extends GpioBase {
     }
 
     activatePumpConsecutively(numberOfConsecutiveActivations, intervalBetweenConsecutiveActivationsInMs = 1500, pumpActivationTimeInMs = 1000) {
+        let me = this;
         this.logMessage('Turning on pump for consecutive watering');
         for(let i = 0; i < numberOfConsecutiveActivations; i++) {
-            setTimeout(() => pump.activateForServeralTime(pumpActivationTimeInMs), intervalBetweenConsecutiveActivationsInMs * (i + 1));
+            setTimeout(() => me.activateForServeralTime(pumpActivationTimeInMs), intervalBetweenConsecutiveActivationsInMs * (i + 1));
         }
     }
 
