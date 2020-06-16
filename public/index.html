@@ -22,7 +22,7 @@
                     <input type="radio" name="pumpoption" id="pumpoptionoff" autocomplete="off"> Off
                 </label>
             </div>
-            <div class="btn-group btn-group-toggle" data-toggle="buttons" id="autowateringoption">
+            <div class="btn-group btn-group-toggle mr-4" data-toggle="buttons" id="autowateringoption">
                 <label class="btn btn-lg" style="color: white">Autowatering:</label>
                 <label class="btn btn-lg btn-secondary active">
                     <input type="radio" name="autowateringoption" id="autowateringoptionon" autocomplete="off"> On
@@ -31,6 +31,7 @@
                     <input type="radio" name="autowateringoption" id="autowateringoptionoff" autocomplete="off"> Off
                 </label>
             </div>
+            <button type="button" id='activatePumpConsecutivelyButton' class="btn btn-lg btn-secondary">Activate pump consecutively</button>
             <button type="button" id='clearLogButton' class="btn btn-lg btn-secondary mr-2 float-right">Clear Log</button>
 
         </div>
@@ -154,7 +155,7 @@
                 document.getElementById('pumpoptionon').onclick = () => fetch('pump/on', { method: 'post' });
                 document.getElementById('pumpoptionoff').onclick = () => fetch('pump/off', { method: 'post' });
                 document.getElementById('clearLogButton').onclick = () => {logContainer.innerHTML = ''};
-
+                document.getElementById('activatePumpConsecutivelyButton').onclick = () => fetch('pump/consecutively', { method: 'post' });
             }
         </script>
     </body>

@@ -46,9 +46,7 @@ let onNewMoistureSensorValue = (value) => {
     let isWet = (value <= config.IS_WET_THRESHOLD);
     if(config.IS_AUTOWATERING_ENABLED && !isWet) {
         logger.info('Turning on pump for consecutive watering');
-        for(let i = 0; i < config.NUMBER_OF_CONSECUTIVE_WATERING; i++) {
-            setTimeout(() => pump.activateForServeralTime(1000), config.CONSECUTIVE_WATERING_INTERVAL * (i + 1));
-        }
+        pump.activatePumpConsecutively(config.NUMBER_OF_CONSECUTIVE_WATERING, config.CONSECUTIVE_WATERING_INTERVAL);
     }
     io.emit('newMoistureSensorValue', value);
 }
@@ -94,6 +92,12 @@ app.post('/autowatering/on', (req, res) => {
 
 app.post('/autowatering/off', (req, res) => {
     return res.send(turnOffAutowatering());
+});
+
+app.post('/pump/consecutively', (req, res) => {
+    logger.info('Turning on pump for consecutive watering');
+    pump.activatePumpConsecutively(config.NUMBER_OF_CONSECUTIVE_WATERING, config.CONSECUTIVE_WATERING_INTERVAL);
+    return res.send(true);
 });
 
 app.post('/pump/on', (req, res) => {
