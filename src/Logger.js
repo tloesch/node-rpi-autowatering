@@ -23,6 +23,10 @@ class Logger {
     warn(message) {
         this.logMessage(message, 'warn');
     }
+
+    action(message) {
+        this.logMessage(message, 'action');
+    }
 }
 
 module.exports = Logger;

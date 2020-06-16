@@ -45,7 +45,7 @@ logger.onLog = (message, type) => {
 let onNewMoistureSensorValue = (value) => {
     let isWet = (value <= config.IS_WET_THRESHOLD);
     if(config.IS_AUTOWATERING_ENABLED && !isWet) {
-        logger.info('Turning on pump for consecutive watering');
+        logger.action('Turning on pump for consecutive watering');
         pump.activatePumpConsecutively(config.NUMBER_OF_CONSECUTIVE_WATERING, config.CONSECUTIVE_WATERING_INTERVAL);
     }
     io.emit('newMoistureSensorValue', value);
@@ -71,21 +71,21 @@ let turnOffAutowatering = () => {
     config.update({IS_AUTOWATERING_ENABLED: false});
     io.emit('configUpdated', config.getPublicConfigObject());
     let response = {message: 'Autowatering: Pump could continue to run for about ' + (config.CONSECUTIVE_WATERING_INTERVAL * config.NUMBER_OF_CONSECUTIVE_WATERING / 1000) + ' seconds!'};
-    logger.info('Autowatering turned off!');
+    logger.action('Autowatering turned off!');
     logger.warn(response.message);
     return response;
 };
 
 let turnOffPump = () => {
     pump.off();
-    logger.info('Pump turned off!');
+    logger.action('Pump turned off!');
     io.emit('pumpToggled', pump.isActivated());
 };
 
 app.post('/autowatering/on', (req, res) => {
     turnOffPump();
     config.update({IS_AUTOWATERING_ENABLED: true});
-    logger.info('Autowatering turned on!');
+    logger.action('Autowatering turned on!');
     io.emit('configUpdated', config.getPublicConfigObject());
     return res.send(true);
 });
@@ -95,15 +95,15 @@ app.post('/autowatering/off', (req, res) => {
 });
 
 app.post('/pump/consecutively', (req, res) => {
-    logger.info('Turning on pump for consecutive watering');
+    logger.action('Turning on pump for consecutive watering');
     pump.activatePumpConsecutively(config.NUMBER_OF_CONSECUTIVE_WATERING, config.CONSECUTIVE_WATERING_INTERVAL);
     return res.send(true);
 });
 
 app.post('/pump/on', (req, res) => {
-    pump.on();
-    logger.info('Pump turned on!');
     config.IS_AUTOWATERING_ENABLED && turnOffAutowatering();
+    pump.on();
+    logger.action('Pump turned on!');
     io.emit('pumpToggled', pump.isActivated());
     return res.send(true);
 });

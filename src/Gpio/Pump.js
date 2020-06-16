@@ -19,13 +19,13 @@ class GpioPump extends GpioBase {
     }
 
     on() {
-        this.logMessage('Turned pump on');
+        this.logMessage('Turned pump on', 'action');
         this.gpio.writeSync(0);
         this._isActivated = true;
     }
 
     off() {
-        this.logMessage('Turned pump off');
+        this.logMessage('Turned pump off', 'action');
         this.gpio && this.gpio.writeSync(1);
         this._isActivated = false;
     }
@@ -42,7 +42,7 @@ class GpioPump extends GpioBase {
 
     activatePumpConsecutively(numberOfConsecutiveActivations, intervalBetweenConsecutiveActivationsInMs = 1500, pumpActivationTimeInMs = 1000) {
         let me = this;
-        this.logMessage('Turning on pump for consecutive watering');
+        this.logMessage('Turning on pump for consecutive watering', 'action');
         for(let i = 0; i < numberOfConsecutiveActivations; i++) {
             setTimeout(() => me.activateForServeralTime(pumpActivationTimeInMs), intervalBetweenConsecutiveActivationsInMs * (i + 1));
         }

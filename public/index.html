@@ -137,16 +137,17 @@
                 });
 
                 let logContainer = document.getElementById('logContainer');
-                let logTypeColorMap = {
-                    'info': '#3988ff',
-                    'warn': 'yellow',
-                    'error': 'red',
+                let logTypeStyleMap = {
+                    'info': {color: '#3988ff', fontSize: '1vw'},
+                    'warn': {color: 'yellow', fontSize: '1.9vw'},
+                    'error': {color: 'red', fontSize: '1.9vw'},
+                    'action': {color: 'green', fontSize: '1.5vw'},
                 }
                 socket.on('messageLogged', (message, type) => {
                     let element = document.createElement('p');
-                    element.innerHTML = '['+new Date().toLocaleString()+'][<span style="color: ' + logTypeColorMap[type] + '">'+type+'</span>] ' + message;
+                    element.innerHTML = '['+new Date().toLocaleString()+'][<span style="color: ' + logTypeStyleMap[type].color + '">'+type+'</span>] ' + message;
                     element.style.margin = '15px 5px 15px 5px';
-                    element.style.fontSize = "1.9vw";
+                    element.style.fontSize = logTypeStyleMap[type].fontSize;
                     logContainer.prepend(element);
                 });
 
