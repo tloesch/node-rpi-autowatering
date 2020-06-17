@@ -1,4 +1,5 @@
 const MixinLogger = require('../Mixin/Logger');
+const MixinContinuouslyReading = require('../Mixin/ContinuouslyReading');
 if(['arm', 'arm64'].includes(process.arch)) {
     const Raspi = require('raspi');
     const I2C = require('raspi-i2c').I2C;
@@ -49,28 +50,16 @@ class ADS1x15MoistureSensor {
                 });
             });
         }
-        return null;
-    }
-
-    startContinuouslyReading(callback, interval = 1000) {
-        this.logMessage('Moisture Sensor: started ContinuouslyReading every ' + interval / 1000 + ' seconds', 'action');
-        this.stopContinuouslyReading();
-        this.interval = setInterval(async () => {
-            let value = await this.getValue();
-            callback(value);
-        }, interval);
-    }
-
-    stopContinuouslyReading() {
-        if(this.interval) {
-            this.logMessage('Moisture Sensor: stopped ContinuouslyReading', 'action');
-            clearInterval(this.interval);
-            this.interval = null;
-        }
+        return -1;
     }
 
 }
 
 Object.assign(ADS1x15MoistureSensor.prototype, MixinLogger);
+
+let copyFromMixinContinuouslyReading = {};
+Object.assign(copyFromMixinContinuouslyReading, MixinContinuouslyReading);
+Object.assign(copyFromMixinContinuouslyReading, ADS1x15MoistureSensor.prototype);
+Object.assign(ADS1x15MoistureSensor.prototype, copyFromMixinContinuouslyReading);
 
 module.exports = ADS1x15MoistureSensor;

@@ -4,7 +4,7 @@ class DummyInterface {
     }
 
     readSync() {
-        return 1;
+        return -1;
     }
 
     writeSync(value) {
