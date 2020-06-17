@@ -6,14 +6,17 @@ class GpioMoistureSensor extends GpioBase {
         return new this.GpioInterface(pin, 'in', 'both');
     }
 
-    getValue() {
+    async getValue() {
         return this.gpio.readSync();
     }
 
     startContinuouslyReading(callback, interval = 1000) {
         this.logMessage('Moisture Sensor: started ContinuouslyReading every ' + interval / 1000 + ' seconds', 'action');
         this.stopContinuouslyReading();
-        this.interval = setInterval(() => callback(this.getValue()), interval);
+        this.interval = setInterval(async () => {
+            let value = await this.getValue();
+            callback(value);
+        }, interval);
     }
 
     stopContinuouslyReading() {
