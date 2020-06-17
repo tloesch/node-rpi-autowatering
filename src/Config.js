@@ -1,8 +1,8 @@
 class Config {
 
     constructor(configFolderPath = '') {
-        this.staticProperties = ['GPIO', 'PORT', 'BASIC_AUTH'];
-        this.privateProperties = ['GPIO', 'PORT', 'BASIC_AUTH'];
+        this.staticProperties = ['GPIO', 'PORT', 'BASIC_AUTH', 'INTERFACES_TO_USE'];
+        this.privateProperties = ['GPIO', 'PORT', 'BASIC_AUTH', 'INTERFACES_TO_USE'];
 
         this.fs = require('fs');
         this.configPath = configFolderPath + 'config.json';

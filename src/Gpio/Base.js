@@ -3,8 +3,15 @@ const MixinLogger = require('../Mixin/Logger');
 class GpioBase {
 
     constructor(gpioPin) {
-       // this.GpioInterface = require('onoff').Gpio;
-        this.GpioInterface = require('./DummyInterface.js');
+        if(['arm', 'arm64'].includes(process.arch)) {
+            this.GpioInterface = require('onoff').Gpio;
+        } else {
+            this.GpioInterface = require('./DummyInterface.js');
+            console.log('------------------------------------------------------------------------------------------');
+            console.log('GpioBase.js: Unsupported platform for onoff (GPIO): wanted {"os":"any","arch":"arm,arm64"}');
+            console.log('------------------------------------------------------------------------------------------');
+        }
+
         this.setGpioPin(gpioPin)
     }
 

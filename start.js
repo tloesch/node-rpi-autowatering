@@ -8,12 +8,19 @@ const Config = require('./src/Config.js');
 const Logger = require('./src/Logger.js');
 const GpioPump = require('./src/Gpio/Pump.js');
 const GpioMoistureSensor = require('./src/Gpio/MoistureSensor.js');
-
+const ADS1x15MoistureSensor = require('./src/ADS1x15/MoistureSensor.js');
 
 let logger = new Logger();
 let config = new Config();
+
 let pump = new GpioPump(config.GPIO.PUMP);
-let moistureSensor = new GpioMoistureSensor(config.GPIO.MOISTURE_SENSOR);
+let moistureSensor = null;
+if(config.INTERFACES_TO_USE.MOISTURE_SENSOR == 'GPIO') {
+    moistureSensor = new GpioMoistureSensor(config.GPIO.MOISTURE_SENSOR);
+} else {
+    moistureSensor = new ADS1x15MoistureSensor(config.INTERFACES_TO_USE.MOISTURE_SENSOR);
+
+}
 
 config.setLogger(logger);
 //pump.setLogger(logger);
@@ -61,9 +68,9 @@ app.use(express.static(__dirname + '/node_modules/jquery/dist'));
 
 app.post('/config/update', (req, res) => {
     config.update(req.body);
+    io.emit('configUpdated', config.getPublicConfigObject());
     moistureSensor.stopContinuouslyReading();
     moistureSensor.startContinuouslyReading(onNewMoistureSensorValue, config.MOISTURE_SENSOR_UPDATE_INTERVAL);
-    io.emit('configUpdated', config.getPublicConfigObject());
     return res.send(config.getConfigObject());
 });
 
