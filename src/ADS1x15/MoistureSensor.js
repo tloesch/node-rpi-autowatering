@@ -4,13 +4,15 @@ const I2C = require('raspi-i2c').I2C;
 const ADS1x15 = require('raspi-kit-ads1x15');
 
 
-class ADS1x15MoistureSensor extends GpioMoistureSensor {
+class ADS1x15MoistureSensor {
 
     constructor() {
+	
         this.adc = null;
+	let me = this;
         Raspi.init(() => {
-            this.adc = this.createInterface();
-        }.bind(this));
+            me.adc = me.createInterface();
+        });
     }
 
     createInterface() {
@@ -31,18 +33,19 @@ class ADS1x15MoistureSensor extends GpioMoistureSensor {
 
     async getValue() {
         if(this.adc) {
+		let me = this;
             return new Promise((resolve, reject) => {
-                this.adc.readChannel(ADS1x15.channel.CHANNEL_0, (err, value, volts) => {
+                me.adc.readChannel(ADS1x15.channel.CHANNEL_0, (err, value, volts) => {
                     if (err) {
-                        this.logMessage('Failed to fetch value from ADC' + JSON.stringify(err), 'error');
+                        me.logMessage('Failed to fetch value from ADC' + JSON.stringify(err), 'error');
                     } else {
-                        this.logMessage('Channel 0');
-                        this.logMessage(' * Value:' + value);    // will be a 11 or 15 bit integer depending on chip
-                        this.logMessage(' * Volts:' + volts);    // voltage reading factoring in the PGA
+                        me.logMessage('Channel 0');
+                        me.logMessage(' * Value:' + value);    // will be a 11 or 15 bit integer depending on chip
+                        me.logMessage(' * Volts:' + volts);    // voltage reading factoring in the PGA
                     }
                     resolve(value);
-                }.bind(this));
-            }.bind(this));
+                });
+            });
         }
         return null;
     }
