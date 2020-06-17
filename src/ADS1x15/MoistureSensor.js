@@ -60,10 +60,6 @@ class ADS1x15MoistureSensor {
 }
 
 Object.assign(ADS1x15MoistureSensor.prototype, MixinLogger);
-
-let copyFromMixinContinuouslyReading = {};
-Object.assign(copyFromMixinContinuouslyReading, MixinContinuouslyReading);
-Object.assign(copyFromMixinContinuouslyReading, ADS1x15MoistureSensor.prototype);
-Object.assign(ADS1x15MoistureSensor.prototype, copyFromMixinContinuouslyReading);
+Object.assign(ADS1x15MoistureSensor.prototype, MixinContinuouslyReading);
 
 module.exports = ADS1x15MoistureSensor;

@@ -2,10 +2,6 @@ const MixinLogger = require('./Logger');
 
 let MixinContinuouslyReading = {
 
-    async getValue() {
-        return -1;
-    },
-
     startContinuouslyReading(callback, interval = 1000) {
         this.logMessage('Moisture Sensor: started ContinuouslyReading every ' + interval / 1000 + ' seconds', 'action');
         this.stopContinuouslyReading();

@@ -12,10 +12,6 @@ class GpioMoistureSensor extends GpioBase {
     }
 
 }
-
-let copyFromMixinContinuouslyReading = {};
-Object.assign(copyFromMixinContinuouslyReading, MixinContinuouslyReading);
-Object.assign(copyFromMixinContinuouslyReading, GpioMoistureSensor.prototype);
-Object.assign(GpioMoistureSensor.prototype, copyFromMixinContinuouslyReading);
+Object.assign(GpioMoistureSensor.prototype, MixinContinuouslyReading);
 
 module.exports = GpioMoistureSensor;
