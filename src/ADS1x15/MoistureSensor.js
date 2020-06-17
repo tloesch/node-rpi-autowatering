@@ -1,8 +1,16 @@
 const MixinLogger = require('../Mixin/Logger');
+let Raspi = null;
+let I2C = null;
+let ADS1x15 = null;
+
+console.log(process.arch, ['arm', 'arm64'].includes(process.arch));
+
+
+
 if(['arm', 'arm64'].includes(process.arch)) {
-    const Raspi = require('raspi');
-    const I2C = require('raspi-i2c').I2C;
-    const ADS1x15 = require('raspi-kit-ads1x15');
+    Raspi = require('raspi');
+    I2C = require('raspi-i2c').I2C;
+    ADS1x15 = require('raspi-kit-ads1x15');
 }
 
 class ADS1x15MoistureSensor {
