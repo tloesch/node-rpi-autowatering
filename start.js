@@ -123,16 +123,16 @@ app.post('/pump/off', (req, res) => {
     return res.send(true);
 });
 
-app.get('/moiusturesensor/value', (req, res) => {
+app.get('/moisturesensor/value', (req, res) => {
     return res.send(moistureSensor.getValue());
 });
 
-app.get('/moiusturesensor/logfiles', (req, res) => {
+app.get('/moisturesensor/logfiles', (req, res) => {
     let files = fs.readdirSync(moistureSensor.continuouslyReadingFolderPath);
     return res.send(JSON.stringify(files));
 });
 
-app.get('/moiusturesensor/logfiles/:fileName', function (req, res) {
+app.get('/moisturesensor/logfiles/:fileName', function (req, res) {
     let fileName = req.params.fileName;
     if(fileName.indexOf('.json') === -1) {
         fileName += '.json';
