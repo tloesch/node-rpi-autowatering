@@ -3,6 +3,7 @@ const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 const basicAuth = require('express-basic-auth');
+const fs = require('fs');
 
 const Config = require('./src/Config.js');
 const Logger = require('./src/Logger.js');
@@ -19,8 +20,8 @@ if(config.INTERFACES_TO_USE.MOISTURE_SENSOR == 'GPIO') {
     moistureSensor = new GpioMoistureSensor(config.GPIO.MOISTURE_SENSOR);
 } else {
     moistureSensor = new ADS1x15MoistureSensor(config.INTERFACES_TO_USE.MOISTURE_SENSOR);
-
 }
+moistureSensor.initContinuouslyReadingLogging();
 
 config.setLogger(logger);
 //pump.setLogger(logger);
@@ -124,6 +125,27 @@ app.post('/pump/off', (req, res) => {
 
 app.get('/moiusturesensor/value', (req, res) => {
     return res.send(moistureSensor.getValue());
+});
+
+app.get('/moiusturesensor/logfiles', (req, res) => {
+    let files = fs.readdirSync(moistureSensor.continuouslyReadingFolderPath);
+    return res.send(JSON.stringify(files));
+});
+
+app.get('/moiusturesensor/logfiles/:fileName', function (req, res) {
+    let fileName = req.params.fileName;
+    if(fileName.indexOf('.json') === -1) {
+        fileName += '.json';
+    }
+    let files = fs.readdirSync(moistureSensor.continuouslyReadingFolderPath);
+    let content = [];
+    if(files.includes(fileName)) {
+        content = fs.readFileSync(moistureSensor.continuouslyReadingFolderPath + fileName);
+        content = JSON.parse(content.toString());
+    }
+    res.send(content);
+
+
 });
 
 app.get('/config', (req, res) => {
