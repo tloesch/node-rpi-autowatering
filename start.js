@@ -54,7 +54,7 @@ let onNewMoistureSensorValue = (value) => {
     let isWet = (value <= config.IS_WET_THRESHOLD);
     if(config.IS_AUTOWATERING_ENABLED && !pump.isActivated() && !isWet) {
         logger.action('Turning on pump for consecutive watering');
-        pump.activatePumpConsecutively(config.NUMBER_OF_CONSECUTIVE_WATERING, config.CONSECUTIVE_WATERING_INTERVAL);
+        pump.activatePumpConsecutively(config.NUMBER_OF_CONSECUTIVE_WATERING, config.CONSECUTIVE_WATERING_INTERVAL, config.CONSECUTIVE_WATERING_PUMP_ACTIVATION_DURATION);
     }
     io.emit('newMoistureSensorValue', value);
 }
