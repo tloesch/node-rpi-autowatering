@@ -53,6 +53,7 @@
             window.onload = function () {
                 let chart = new CanvasJS.Chart("chartContainer", {
                     animationEnabled: true,
+                    zoomEnabled: true,
                     theme: "dark2",
                     title:{
                         text: "Soil Moisture Sensor Output"
@@ -60,8 +61,13 @@
                     axisY:{
                         includeZero: false,
                     },
+                    axisX:{
+                        title: "Time",
+                        gridThickness: 2,
+                    },
                     data: [{
                         type: "line",
+                        xValueType: 'dateTime',
                         indexLabelFontSize: 16,
 						lineColor: "green",
                         dataPoints: []
@@ -118,7 +124,7 @@
                 });
 
                 socket.on('newMoistureSensorValue', (value) => {
-                    chart.data[0].dataPoints.push({y: value});
+                    chart.data[0].dataPoints.push({x: +new Date(), y: value});
                     chart.render();
                 });
 
