@@ -14,9 +14,17 @@ let MixinContinuouslyReading = {
 
     initContinuouslyReadingLoggingObjectIfDayChanges() {
         if(this.currentLoggingDate != new Date().toISOString().substr(0,10)) {
-            this.loggedValues = [];
+            this.continuouslyReadedValues = [];
             this.currentLoggingDate =  new Date().toISOString().substr(0,10);
+            this.continuouslyReadingLoggingFileName = this.currentLoggingDate  + '-continuously-reading-values.json';
+            if (fs.existsSync(this.getContinuouslyReadingLoggingFilePath())) {
+                this.continuouslyReadedValues = JSON.parse(fs.readFileSync(this.getContinuouslyReadingLoggingFilePath()).toString());
+            }
         }
+    },
+
+    getContinuouslyReadingLoggingFilePath() {
+        return this.continuouslyReadingFolderPath + this.continuouslyReadingLoggingFileName;
     },
 
     logValue(value) {
@@ -24,8 +32,8 @@ let MixinContinuouslyReading = {
             return;
         }
         this.initContinuouslyReadingLoggingObjectIfDayChanges();
-        this.loggedValues.push({timestamp: +new Date(), value: value});
-        fs.writeFileSync(this.continuouslyReadingFolderPath + new Date().toISOString().substr(0,10) + '-continuously-reading-values.json', JSON.stringify(this.loggedValues), 'utf8');
+        this.continuouslyReadedValues.push({timestamp: +new Date(), value: value});
+        fs.writeFileSync(this.getContinuouslyReadingLoggingFilePath(), JSON.stringify(this.continuouslyReadedValues), 'utf8');
     },
 
     startContinuouslyReading(callback, interval = 1000) {
