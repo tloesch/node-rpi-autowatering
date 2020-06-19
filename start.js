@@ -134,18 +134,13 @@ app.get('/moisturesensor/logfiles', (req, res) => {
 
 app.get('/moisturesensor/logfiles/:fileName', function (req, res) {
     let fileName = req.params.fileName;
-    if(fileName.indexOf('.json') === -1) {
-        fileName += '.json';
+    let values = [];
+    if(fileName == 'current') {
+        values = moistureSensor.getCurrentLoggedValues();
+    } else {
+        values = moistureSensor.getLoggedValuesFromLogfile(fileName);
     }
-    let files = fs.readdirSync(moistureSensor.continuouslyReadingFolderPath);
-    let content = [];
-    if(files.includes(fileName)) {
-        content = fs.readFileSync(moistureSensor.continuouslyReadingFolderPath + fileName);
-        content = JSON.parse(content.toString());
-    }
-    res.send(content);
-
-
+    res.send(values);
 });
 
 app.get('/config', (req, res) => {

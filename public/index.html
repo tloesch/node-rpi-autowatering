@@ -75,6 +75,24 @@
                 });
                 chart.render();
 
+
+                fetch('/moisturesensor/logfiles/current', { method: 'get' })
+                    .then(response => response.json())
+                    .then(data => {
+                        for(let i = 0; i < data.length; i++) {
+                            chart.data[0].dataPoints.push({x: data[i].timestamp, y: data[i].value});
+                        }
+                        chart.render();
+                    });
+
+
+
+                socket.on('newMoistureSensorValue', (value) => {
+                    chart.data[0].dataPoints.push({x: +new Date(), y: value});
+                    chart.render();
+                });
+
+
                 let renderConfigForm = (config) => {
                     let formFields = document.getElementById('configFormFields');
                     formFields.innerHTML = "";
@@ -123,10 +141,6 @@
                     });
                 });
 
-                socket.on('newMoistureSensorValue', (value) => {
-                    chart.data[0].dataPoints.push({x: +new Date(), y: value});
-                    chart.render();
-                });
 
                 socket.on('configUpdated', (config) => {
                     let idToToggle = 'autowateringoptionoff';

@@ -27,6 +27,25 @@ let MixinContinuouslyReading = {
         return this.continuouslyReadingFolderPath + this.continuouslyReadingLoggingFileName;
     },
 
+
+    getLoggedValuesFromLogfile(fileName) {
+        if(fileName.indexOf('.json') === -1) {
+            fileName += '.json';
+        }
+        let files = fs.readdirSync(this.continuouslyReadingFolderPath);
+        let content = [];
+        if(files.includes(fileName)) {
+            content = fs.readFileSync(this.continuouslyReadingFolderPath + fileName);
+            content = JSON.parse(content.toString());
+        }
+        return content
+    },
+
+    getCurrentLoggedValues() {
+        this.initContinuouslyReadingLoggingObjectIfDayChanges();
+        return this.continuouslyReadedValues;
+    },
+
     logValue(value) {
         if(!this.loggingOfContinuouslyReadingEnabled) {
             return;
