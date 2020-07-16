@@ -7,7 +7,7 @@ let MixinContinuouslyReading = {
     initContinuouslyReadingLogging(folderPath = 'log/continuously_reading/') {
         this.loggingOfContinuouslyReadingEnabled = true;
         this.continuouslyReadingFolderPath = process.cwd() + '/' + folderPath + '/';
-        fs.mkdirSync(this.continuouslyReadingFolderPath, {recursive: true});
+        fs.existsSync(this.continuouslyReadingFolderPath) || fs.mkdirSync(this.continuouslyReadingFolderPath, {recursive: true});
         this.initContinuouslyReadingLoggingObjectIfDayChanges();
     },
 
