@@ -8,9 +8,7 @@ class Config {
         this.configPath = configFolderPath + 'config.json';
         this.config = this.getDefaultConfig();
         if(this.fs.existsSync(this.configPath)) {
-            this.update(JSON.parse(this.fs.readFileSync(this.configPath)));
-        } else {
-            this.update(this.getDefaultConfig());
+            this.config = JSON.parse(this.fs.readFileSync(this.configPath));
         }
         return this.createProxy();
     }

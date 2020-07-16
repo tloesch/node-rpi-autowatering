@@ -6,7 +6,7 @@ class Logger {
     constructor(writeFile = true, folderPath = 'log') {
         this.fileWritingEnabled = writeFile;
         this.folderPath = process.cwd() + '/' + folderPath + '/';
-        fs.mkdirSync(this.folderPath, {recursive: true});
+        fs.existsSync(this.folderPath) || fs.mkdirSync(this.folderPath, {recursive: true});
     }
 
     onLog(message, type) {}
