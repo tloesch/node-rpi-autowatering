@@ -123,6 +123,11 @@ app.post('/pump/off', (req, res) => {
     return res.send(true);
 });
 
+
+app.get('/pump/activated', (req, res) => {
+    return res.send(pump.isActivated());
+});
+
 app.get('/moisturesensor/value', async (req, res) => {
     let value = await moistureSensor.getValue();
     return res.send({value});
