@@ -19,6 +19,6 @@
     "raspi": "^6.0.1",
     "raspi-i2c": "^6.2.4",
     "raspi-kit-ads1x15": "^1.0.0",
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.4.0"
   }
 }
